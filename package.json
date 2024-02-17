@@ -1,0 +1,16 @@
+{
+  "name": "integration-testing-rest-api-jest-superset",
+  "version": "1.0.0",
+  "description": "Performing a simple CRUD operation on a REST API with Jest and Supertest",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Dakouri Kobri",
+  "license": "ISC",
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "supertest": "^6.3.4"
+  }
+}
