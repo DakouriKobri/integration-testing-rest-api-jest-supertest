@@ -26,6 +26,10 @@ function getCats() {
   return api.get('/cats');
 }
 
+function getSingleCat(id) {
+  return api.get(`/cats/${id}`);
+}
+
 //  GET /cats - returns `{cats: [cat, ...]}`
 
 describe('GET /cats', () => {
@@ -62,13 +66,13 @@ describe('GET /cats', () => {
 
 describe('GET /cats/:id', () => {
   it('returns status code 200 given a cat id', async () => {
-    await api.get(`/cats/${cat.id}`).expect(200);
+    await getSingleCat(cat.id).expect(200);
   });
 
   it('returns cat given cat id', async () => {
     const expected = cat;
 
-    const response = await api.get(`/cats/${cat.id}`);
+    const response = await getSingleCat(cat.id);
     const actual = response.body.cat;
 
     expect(actual).toEqual(expected);
@@ -77,7 +81,7 @@ describe('GET /cats/:id', () => {
   it('asserts cat is of type object given cat id', async () => {
     const expected = 'object';
 
-    const response = await api.get(`/cats/${cat.id}`);
+    const response = await getSingleCat(cat.id);
     const actual = typeof response.body.cat;
 
     expect(actual).toBe(expected);
@@ -86,7 +90,7 @@ describe('GET /cats/:id', () => {
   it('returns status code 404 when no cat is found given cat id', async () => {
     const expected = 404;
 
-    const response = await api.get(`/cats/10000`);
+    const response = await getSingleCat(1000);
     const actual = response.status;
 
     expect(actual).toEqual(expected);
@@ -95,7 +99,7 @@ describe('GET /cats/:id', () => {
   it("returns message 'Not found' when no cat is found given cat id", async () => {
     const expected = 'Not found';
 
-    const response = await api.get(`/cats/1000`);
+    const response = await getSingleCat(1000);
     const actual = response.body.error.message;
 
     expect(actual).toEqual(expected);
