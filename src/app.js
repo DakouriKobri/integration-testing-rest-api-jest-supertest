@@ -4,13 +4,10 @@
 const express = require('express');
 
 // Project Imports
-const db = require('./db');
+const catRouter = require('./cats/cat.routes');
 
 const app = express();
 
-app.get('/cats', async (req, res) => {
-  const cats = await db.query('SELECT id, name FROM cats');
-  return res.status(200).json({ cats: cats.rows });
-});
+app.use(catRouter);
 
 module.exports = app;
