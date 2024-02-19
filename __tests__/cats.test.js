@@ -32,6 +32,27 @@ describe('GET /cats', () => {
 
     expect(actual).toBe(expected);
   });
+
+  it('return 1 as length ', async () => {
+    const expected = 1;
+
+    const response = await api.get('/cats');
+    const { cats } = response.body;
+
+    console.log('cats:', cats);
+
+    expect(cats).toHaveLength(expected);
+  });
+
+  it('returns `cat`', async () => {
+    const expected = cat;
+
+    const response = await api.get('/cats');
+    const { cats } = response.body;
+    const actual = cats[0];
+
+    expect(actual).toEqual(expected);
+  });
 });
 
 afterEach(async () => {
