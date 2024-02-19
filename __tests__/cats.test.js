@@ -93,6 +93,15 @@ describe('GET /cats/:id - 404 Error', () => {
 
     expect(actual).toEqual(expected);
   });
+
+  it("returns message 'Not found' when no cat is found given cat id", async () => {
+    const expected = 'Not found';
+
+    const response = await api.get(`/cats/${cat.id}`);
+    const actual = response.body.error;
+
+    expect(actual).toEqual(expected);
+  });
 });
 
 afterEach(async () => {
