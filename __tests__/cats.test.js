@@ -27,6 +27,7 @@ function getCats() {
 }
 
 //  GET /cats - returns `{cats: [cat, ...]}`
+
 describe('GET /cats', () => {
   it('returns statusCode 200', async () => {
     const expected = 200;
@@ -57,6 +58,8 @@ describe('GET /cats', () => {
   });
 });
 
+// GET / cats / [id] - return data about one cat: `{cat: cat}`
+
 describe('GET /cats/:id', () => {
   it('returns status code 200 given a cat id', async () => {
     await api.get(`/cats/${cat.id}`).expect(200);
@@ -79,16 +82,11 @@ describe('GET /cats/:id', () => {
 
     expect(actual).toBe(expected);
   });
-});
-
-describe('GET /cats/:id - 404 Error', () => {
-  // Empty cats table before testing 'not found' error
-  beforeEach(async () => await db.query('DELETE FROM cats'));
 
   it('returns status code 404 when no cat is found given cat id', async () => {
     const expected = 404;
 
-    const response = await api.get(`/cats/${cat.id}`);
+    const response = await api.get(`/cats/10000`);
     const actual = response.status;
 
     expect(actual).toEqual(expected);
@@ -97,7 +95,7 @@ describe('GET /cats/:id - 404 Error', () => {
   it("returns message 'Not found' when no cat is found given cat id", async () => {
     const expected = 'Not found';
 
-    const response = await api.get(`/cats/${cat.id}`);
+    const response = await api.get(`/cats/1000`);
     const actual = response.body.error.message;
 
     expect(actual).toEqual(expected);
