@@ -32,7 +32,7 @@ describe('GET /cats', () => {
     const expected = 200;
 
     const response = await getCats();
-    const actual = response.statusCode;
+    const actual = response.status;
 
     expect(actual).toBe(expected);
   });
@@ -78,6 +78,20 @@ describe('GET /cats/:id', () => {
     const actual = typeof response.body.cat;
 
     expect(actual).toBe(expected);
+  });
+});
+
+describe('GET /cats/:id - 404 Error', () => {
+  // Empty cats table before testing 'not found' error
+  beforeEach(async () => await db.query('DELETE FROM cats'));
+
+  it('returns status code 404 when no cat is found given cat id', async () => {
+    const expected = 404;
+
+    const response = await api.get(`/cats/${cat.id}`);
+    const actual = response.status;
+
+    expect(actual).toEqual(expected);
   });
 });
 
