@@ -22,12 +22,16 @@ beforeEach(async () => {
   cat = result.rows[0];
 });
 
+function getCats() {
+  return api.get('/cats');
+}
+
 //  GET /cats - returns `{cats: [cat, ...]}`
 describe('GET /cats', () => {
   it('returns statusCode 200', async () => {
     const expected = 200;
 
-    const response = await api.get('/cats');
+    const response = await getCats();
     const actual = response.statusCode;
 
     expect(actual).toBe(expected);
@@ -36,10 +40,8 @@ describe('GET /cats', () => {
   it('return 1 as length ', async () => {
     const expected = 1;
 
-    const response = await api.get('/cats');
+    const response = await getCats();
     const { cats } = response.body;
-
-    console.log('cats:', cats);
 
     expect(cats).toHaveLength(expected);
   });
@@ -47,7 +49,7 @@ describe('GET /cats', () => {
   it('returns `cat`', async () => {
     const expected = cat;
 
-    const response = await api.get('/cats');
+    const response = await getCats();
     const { cats } = response.body;
     const actual = cats[0];
 
