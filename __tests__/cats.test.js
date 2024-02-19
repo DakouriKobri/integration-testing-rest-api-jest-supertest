@@ -70,6 +70,15 @@ describe('GET /cats/:id', () => {
 
     expect(actual).toEqual(expected);
   });
+
+  it('asserts cat is of type object given cat id', async () => {
+    const expected = 'object';
+
+    const response = await api.get(`/cats/${cat.id}`);
+    const actual = typeof response.body.cat;
+
+    expect(actual).toBe(expected);
+  });
 });
 
 afterEach(async () => {
