@@ -22,4 +22,8 @@ async function getCatById(req, res, next) {
   }
 }
 
-module.exports = { getAllCats, getCatById };
+async function createCat(req, res) {
+  return res.status(201).end();
+}
+
+module.exports = { createCat, getAllCats, getCatById };

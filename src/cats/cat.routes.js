@@ -10,4 +10,6 @@ catRouter.get('/cats', catController.getAllCats);
 
 catRouter.get('/cats/:id', catController.getCatById);
 
+catRouter.post('/cats', catController.createCat);
+
 module.exports = catRouter;

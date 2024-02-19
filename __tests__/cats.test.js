@@ -111,6 +111,17 @@ afterEach(async () => {
   await db.query('DELETE FROM cats');
 });
 
+// POST /cats - create cat from data; return `{cat: cat}`
+
+describe('POST /cats - create a cat object', () => {
+  it('returns status code 201 when successful', async () => {
+    const expected = 201;
+
+    const newCat = { name: 'Ezra' };
+    await api.post('/cats').send(newCat).expect(201);
+  });
+});
+
 afterAll(async () => {
   // Close de connection
   await db.end();
