@@ -4,8 +4,8 @@ process.env.NODE_ENV = 'test';
 const request = require('supertest');
 
 // Project Imports
-const app = require('../app');
-const db = require('../db');
+const app = require('../src/app');
+const db = require('../src/db');
 
 const api = request(app);
 
