@@ -98,7 +98,7 @@ describe('GET /cats/:id - 404 Error', () => {
     const expected = 'Not found';
 
     const response = await api.get(`/cats/${cat.id}`);
-    const actual = response.body.error;
+    const actual = response.body.error.message;
 
     expect(actual).toEqual(expected);
   });
