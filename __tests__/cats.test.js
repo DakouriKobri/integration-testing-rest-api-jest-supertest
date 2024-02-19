@@ -57,6 +57,21 @@ describe('GET /cats', () => {
   });
 });
 
+describe('GET /cats/:id', () => {
+  it('returns status code 200 given a cat id', async () => {
+    await api.get(`/cats/${cat.id}`).expect(200);
+  });
+
+  it('returns cat given cat id', async () => {
+    const expected = cat;
+
+    const response = await api.get(`/cats/${cat.id}`);
+    const actual = response.body.cat;
+
+    expect(actual).toEqual(expected);
+  });
+});
+
 afterEach(async () => {
   // Delete any data create by test
   await db.query('DELETE FROM cats');

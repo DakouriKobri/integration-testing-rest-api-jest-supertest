@@ -7,4 +7,10 @@ async function findAll() {
   return cats.rows;
 }
 
-module.exports = { findAll };
+async function findById(id) {
+  const queryText = `SELECT id, name FROM cats WHERE id = $1`;
+  const cats = await db.query(queryText, [id]);
+  return cats.rows[0];
+}
+
+module.exports = { findAll, findById };

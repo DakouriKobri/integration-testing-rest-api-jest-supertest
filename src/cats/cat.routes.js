@@ -8,4 +8,6 @@ const catRouter = express.Router();
 
 catRouter.get('/cats', catController.getAllCats);
 
+catRouter.get('/cats/:id', catController.getCatById);
+
 module.exports = catRouter;

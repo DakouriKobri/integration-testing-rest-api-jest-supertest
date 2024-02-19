@@ -6,4 +6,10 @@ async function getAllCats(req, res) {
   return res.status(200).json({ cats });
 }
 
-module.exports = { getAllCats };
+async function getCatById(req, res) {
+  const id = req.params.id;
+  const cat = await catService.findById(id);
+  return res.status(200).json({ cat });
+}
+
+module.exports = { getAllCats, getCatById };
