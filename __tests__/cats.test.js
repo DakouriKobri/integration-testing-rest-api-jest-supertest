@@ -120,6 +120,13 @@ describe('POST /cats - create a cat object', () => {
     const newCat = { name: 'Ezra' };
     await api.post('/cats').send(newCat).expect(expected);
   });
+
+  it('returns cat in a json format when successful', async () => {
+    const expected = /application\/json/;
+
+    const newCat = { name: 'Ezra' };
+    await api.post('/cats').send(newCat).expect('Content-Type', expected);
+  });
 });
 
 afterAll(async () => {

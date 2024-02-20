@@ -23,7 +23,9 @@ async function getCatById(req, res, next) {
 }
 
 async function createCat(req, res) {
-  return res.status(201).end();
+  const { name } = req.body;
+  const cat = catService.create({ name });
+  return res.status(201).json(cat);
 }
 
 module.exports = { createCat, getAllCats, getCatById };

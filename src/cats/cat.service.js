@@ -13,4 +13,10 @@ async function findById(id) {
   return cats.rows[0];
 }
 
-module.exports = { findAll, findById };
+async function create(data) {
+  const queryText = `INSERT INTO cats(name) VALUES($1) RETURNING id, name`;
+  const cats = await db.query(queryText, [data.name]);
+  return cats.rows[0];
+}
+
+module.exports = { create, findAll, findById };
