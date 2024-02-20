@@ -9,7 +9,7 @@ const errorHandler = require('./utils/errorHandler');
 
 const app = express();
 
-app.use(catRouter);
+app.use('/cats', catRouter);
 
 app.use(errorHandler);
 

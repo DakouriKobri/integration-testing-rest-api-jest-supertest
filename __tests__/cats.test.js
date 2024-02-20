@@ -118,7 +118,7 @@ describe('POST /cats - create a cat object', () => {
     const expected = 201;
 
     const newCat = { name: 'Ezra' };
-    await api.post('/cats').send(newCat).expect(201);
+    await api.post('/cats').send(newCat).expect(expected);
   });
 });
 

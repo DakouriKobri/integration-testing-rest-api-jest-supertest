@@ -6,10 +6,10 @@ const catController = require('./cat.controller');
 
 const catRouter = express.Router();
 
-catRouter.get('/cats', catController.getAllCats);
+catRouter.get('/', catController.getAllCats);
 
-catRouter.get('/cats/:id', catController.getCatById);
+catRouter.get('/:id', catController.getCatById);
 
-catRouter.post('/cats', catController.createCat);
+catRouter.post('/', catController.createCat);
 
 module.exports = catRouter;
