@@ -19,4 +19,10 @@ async function create(data) {
   return cats.rows[0];
 }
 
-module.exports = { create, findAll, findById };
+async function update(id, data) {
+  const queryText = `UPDATE cats SET name = $1 WHERE id = $2 RETURNING id, name`;
+  const cats = await db.query(queryText, [data.name, id]);
+  return cats.rows[0];
+}
+
+module.exports = { create, findAll, findById, update };

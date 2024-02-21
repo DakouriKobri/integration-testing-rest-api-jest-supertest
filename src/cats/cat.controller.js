@@ -41,4 +41,13 @@ async function createCat(req, res, next) {
   }
 }
 
-module.exports = { createCat, getAllCats, getCatById };
+async function updateCat(req, res) {
+  const { id } = req.params;
+  const { name } = req.body;
+
+  const cat = await catService.update(id, { name });
+
+  return res.status(200).json({ cat });
+}
+
+module.exports = { createCat, getAllCats, getCatById, updateCat };
