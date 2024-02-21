@@ -30,6 +30,12 @@ function getSingleCat(id) {
   return api.get(`/cats/${id}`);
 }
 
+const validCat = { name: 'Ezra' };
+
+function addNewCat(newCat = validCat) {
+  return api.post('/cats').send(newCat);
+}
+
 //  GET /cats - returns `{cats: [cat, ...]}`
 
 describe('GET /cats', () => {
@@ -117,24 +123,20 @@ describe('POST /cats - create a cat object', () => {
   it('returns status code 201 when successful', async () => {
     const expected = 201;
 
-    const newCat = { name: 'Ezra' };
-    await api.post('/cats').send(newCat).expect(expected);
+    await addNewCat().expect(expected);
   });
 
   it('returns cat in a json format when successful', async () => {
     const expected = /application\/json/;
 
-    const newCat = { name: 'Ezra' };
-    await api.post('/cats').send(newCat).expect('Content-Type', expected);
+    await addNewCat().expect('Content-Type', expected);
   });
 
   it('returns the created cat object when successful', async () => {
-    const newCat = { name: 'Ezra' };
-
     const expectedCatKeys = ['id', 'name'];
-    const expectedName = newCat.name;
+    const expectedName = validCat.name;
 
-    const response = await api.post('/cats').send(newCat);
+    const response = await addNewCat();
     const createdCat = response.body.cat;
 
     const actualCatKeys = Object.keys(createdCat);
@@ -142,6 +144,13 @@ describe('POST /cats - create a cat object', () => {
 
     expect(actualCatKeys).toEqual(expectedCatKeys);
     expect(actualCatName).toBe(expectedName);
+  });
+
+  it('returns status code 400 invalid data is provided', async () => {
+    const invalidCat = { name: 111 };
+    const expected = 400;
+
+    await addNewCat(invalidCat).expect(expected);
   });
 });
 
