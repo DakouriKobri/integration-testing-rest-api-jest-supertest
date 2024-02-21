@@ -38,7 +38,7 @@ function addNewCat(newCat = validCat) {
 
 //  GET /cats - returns `{cats: [cat, ...]}`
 
-describe('GET /cats', () => {
+describe('GET /cats - get all cats', () => {
   it('returns statusCode 200', async () => {
     const expected = 200;
 
@@ -70,7 +70,7 @@ describe('GET /cats', () => {
 
 // GET / cats / [id] - return data about one cat: `{cat: cat}`
 
-describe('GET /cats/:id', () => {
+describe('GET /cats/:id - get a cat', () => {
   it('returns status code 200 given a cat id', async () => {
     await getSingleCat(cat.id).expect(200);
   });
@@ -110,11 +110,6 @@ describe('GET /cats/:id', () => {
 
     expect(actual).toEqual(expected);
   });
-});
-
-afterEach(async () => {
-  // Delete any data create by test
-  await db.query('DELETE FROM cats');
 });
 
 // POST /cats - create cat from data; return `{cat: cat}`
@@ -162,6 +157,11 @@ describe('POST /cats - create a cat object', () => {
 
     expect(actual).toBe(expected);
   });
+});
+
+afterEach(async () => {
+  // Delete any data create by test
+  await db.query('DELETE FROM cats');
 });
 
 afterAll(async () => {
