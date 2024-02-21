@@ -127,6 +127,22 @@ describe('POST /cats - create a cat object', () => {
     const newCat = { name: 'Ezra' };
     await api.post('/cats').send(newCat).expect('Content-Type', expected);
   });
+
+  it('returns the created cat object when successful', async () => {
+    const newCat = { name: 'Ezra' };
+
+    const expectedCatKeys = ['id', 'name'];
+    const expectedName = newCat.name;
+
+    const response = await api.post('/cats').send(newCat);
+    const createdCat = response.body.cat;
+
+    const actualCatKeys = Object.keys(createdCat);
+    const actualCatName = createdCat.name;
+
+    expect(actualCatKeys).toEqual(expectedCatKeys);
+    expect(actualCatName).toBe(expectedName);
+  });
 });
 
 afterAll(async () => {
