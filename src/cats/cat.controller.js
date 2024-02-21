@@ -22,10 +22,23 @@ async function getCatById(req, res, next) {
   }
 }
 
-async function createCat(req, res) {
+async function createCat(req, res, next) {
   const { name } = req.body;
-  const cat = await catService.create({ name });
-  return res.status(201).json({ cat });
+
+  const isString = typeof name === 'string' && /^\d+$/.test(name) === false;
+
+  try {
+    if (!isString) {
+      let invalidInputError = new Error('Name must be a string.');
+      invalidInputError.status = 400;
+      throw invalidInputError;
+    }
+
+    const cat = await catService.create({ name });
+    return res.status(201).json({ cat });
+  } catch (error) {
+    next(error);
+  }
 }
 
 module.exports = { createCat, getAllCats, getCatById };
