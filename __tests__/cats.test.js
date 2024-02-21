@@ -174,6 +174,38 @@ describe('PATCH /cats/:id - Update a cat', () => {
 
     expect(actual).toEqual(expected);
   });
+
+  it('returns status 404 if the cat cannot be found', async () => {
+    const expected = 404;
+
+    await api.patch('/cats/8787897').send(update).expect(expected);
+  });
+
+  it('returns message "Not Found" if the cat cannot be found', async () => {
+    const expected = 'Not Found';
+
+    const response = await api.patch('/cats/8787897').send(update);
+    const actual = response.body.error.message;
+
+    expect(actual).toBe(expected);
+  });
+
+  const invalidCat = { name: 111 };
+
+  it('returns status code 400 if invalid name is provided', async () => {
+    const expected = 400;
+
+    await api.patch(`/cats/${cat.id}`).send(invalidCat).expect(expected);
+  });
+
+  it('returns message "Name must be a string." if invalid name is provided', async () => {
+    const expected = 'Name must be a string.';
+
+    const response = await api.patch(`/cats/${cat.id}`).send(invalidCat);
+    const actual = response.body.error.message;
+
+    expect(actual).toEqual(expected);
+  });
 });
 
 afterEach(async () => {

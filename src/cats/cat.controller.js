@@ -41,13 +41,30 @@ async function createCat(req, res, next) {
   }
 }
 
-async function updateCat(req, res) {
+async function updateCat(req, res, next) {
   const { id } = req.params;
   const { name } = req.body;
 
-  const cat = await catService.update(id, { name });
+  try {
+    const existingCat = await catService.findById(id);
+    if (!existingCat) {
+      let notFoundError = new Error('Not Found');
+      notFoundError.status = 404;
+      throw notFoundError;
+    }
 
-  return res.status(200).json({ cat });
+    const isString = typeof name === 'string' && /^\d+$/.test(name) === false;
+    if (!isString) {
+      invalidInputError = new Error('Name must be a string.');
+      invalidInputError.status = 400;
+      throw invalidInputError;
+    }
+
+    const cat = await catService.update(id, { name });
+    return res.status(200).json({ cat });
+  } catch (error) {
+    next(error);
+  }
 }
 
 module.exports = { createCat, getAllCats, getCatById, updateCat };
