@@ -146,11 +146,21 @@ describe('POST /cats - create a cat object', () => {
     expect(actualCatName).toBe(expectedName);
   });
 
-  it('returns status code 400 invalid data is provided', async () => {
+  it('returns status code 400 when invalid data is provided', async () => {
     const invalidCat = { name: 111 };
     const expected = 400;
 
     await addNewCat(invalidCat).expect(expected);
+  });
+
+  it('returns message "Name must be a string." when invalid `name` is provided', async () => {
+    const invalidCat = { name: 111 };
+    const expected = 'Name must be a string.';
+
+    const response = await addNewCat(invalidCat);
+    const actual = response.body.error.message;
+
+    expect(actual).toBe(expected);
   });
 });
 
