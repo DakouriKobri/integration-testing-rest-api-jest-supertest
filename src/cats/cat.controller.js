@@ -70,7 +70,7 @@ async function updateCat(req, res, next) {
 async function deleteCat(req, res) {
   const { id } = req.params;
   const deletedCatId = await catService.remove(id);
-  return res.status(200).json({ id: deletedCatId });
+  return res.status(200).json({ id: deletedCatId, message: 'Cat deleted' });
 }
 
 module.exports = { createCat, deleteCat, getAllCats, getCatById, updateCat };
