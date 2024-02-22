@@ -44,7 +44,10 @@ describe('GET /cats - Get all cats', () => {
 
 describe('GET /cats/:id - Get a cat', () => {
   it('returns status code 200 given a cat id', async () => {
-    await catHelper.getSingleCat(cat.id).expect(catHelper.statusCode200);
+    const response = await catHelper.getSingleCat(cat.id);
+    const actual = response.status;
+
+    expect(actual).toBe(catHelper.statusCode200);
   });
 
   it('returns cat given cat id', async () => {
@@ -86,13 +89,19 @@ describe('POST /cats - Create a cat object', () => {
   it('returns status code 201 when successful', async () => {
     const expected = 201;
 
-    await catHelper.addNewCat().expect(expected);
+    const response = await catHelper.addNewCat();
+    const actual = response.status;
+
+    expect(actual).toBe(expected);
   });
 
   it('returns cat in a json format when successful', async () => {
-    const expected = /application\/json/;
+    const expected = 'application/json';
 
-    await catHelper.addNewCat().expect('Content-Type', expected);
+    const response = await catHelper.addNewCat();
+    const actual = response.headers['content-type'];
+
+    expect(actual).toContain(expected);
   });
 
   it('returns the created cat object when successful', async () => {
@@ -110,9 +119,10 @@ describe('POST /cats - Create a cat object', () => {
   });
 
   it('returns status code 400 when invalid data is provided', async () => {
-    await catHelper
-      .addNewCat(catHelper.invalidCat)
-      .expect(catHelper.statusCode400);
+    const response = await catHelper.addNewCat(catHelper.invalidCat);
+    const actual = response.status;
+
+    expect(actual).toBe(catHelper.statusCode400);
   });
 
   it('returns message "Name must be a string." when invalid `name` is provided', async () => {
@@ -131,7 +141,7 @@ describe('PATCH /cats/:id - Update a cat', () => {
   it('returns updated cat object when update is successful', async () => {
     const expected = {
       id: cat.id,
-      name: 'Troll',
+      ...catHelper.updateData,
     };
     const response = await catHelper.updateCat(cat.id);
     const actual = response.body.cat;
@@ -140,9 +150,10 @@ describe('PATCH /cats/:id - Update a cat', () => {
   });
 
   it('returns status 404 if the cat cannot be found', async () => {
-    await catHelper
-      .updateCat(catHelper.inexistentCatId)
-      .expect(catHelper.statusCode404);
+    const response = await catHelper.updateCat(catHelper.inexistentCatId);
+    const actual = response.status;
+
+    expect(actual).toBe(catHelper.statusCode404);
   });
 
   it('returns message "Not Found" if the cat cannot be found', async () => {
@@ -155,9 +166,10 @@ describe('PATCH /cats/:id - Update a cat', () => {
   });
 
   it('returns status code 400 if invalid name is provided', async () => {
-    await catHelper
-      .updateCat(cat.id, catHelper.invalidCat)
-      .expect(catHelper.statusCode400);
+    const response = await catHelper.updateCat(cat.id, catHelper.invalidCat);
+    const actual = response.status;
+
+    expect(actual).toBe(catHelper.statusCode400);
   });
 
   it('returns message "Name must be a string." if invalid name is provided', async () => {
@@ -174,7 +186,10 @@ describe('PATCH /cats/:id - Update a cat', () => {
 
 describe('DELETE /cats/:id - Delete a cat', () => {
   it('returns status code 200 on successful deletion of a given cat', async () => {
-    await catHelper.deleteCat(cat.id).expect(catHelper.statusCode200);
+    const response = await catHelper.deleteCat(cat.id);
+    const actual = response.status;
+
+    expect(actual).toBe(catHelper.statusCode200);
   });
 
   it('returns id of deleted cat on its successful deletion', async () => {
@@ -196,9 +211,10 @@ describe('DELETE /cats/:id - Delete a cat', () => {
   });
 
   it('returns status code 404 if cat to delete does not exist', async () => {
-    await catHelper
-      .deleteCat(catHelper.inexistentCatId)
-      .expect(catHelper.statusCode404);
+    const response = await catHelper.deleteCat(catHelper.inexistentCatId);
+    const actual = response.status;
+
+    expect(actual).toBe(catHelper.statusCode404);
   });
 
   it('returns message "Not found" if cat to delete does not exist', async () => {
