@@ -67,4 +67,8 @@ async function updateCat(req, res, next) {
   }
 }
 
-module.exports = { createCat, getAllCats, getCatById, updateCat };
+async function deleteCat(req, res) {
+  return res.status(200).end();
+}
+
+module.exports = { createCat, deleteCat, getAllCats, getCatById, updateCat };

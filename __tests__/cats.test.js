@@ -44,7 +44,7 @@ function updateCat(id = cat.id, update = updateData) {
 
 //  GET /cats - returns `{cats: [cat, ...]}`
 
-describe('GET /cats - get all cats', () => {
+describe('GET /cats - Get all cats', () => {
   it('returns statusCode 200', async () => {
     const expected = 200;
 
@@ -76,7 +76,7 @@ describe('GET /cats - get all cats', () => {
 
 // GET / cats / [id] - return data about one cat: `{cat: cat}`
 
-describe('GET /cats/:id - get a cat', () => {
+describe('GET /cats/:id - Get a cat', () => {
   it('returns status code 200 given a cat id', async () => {
     await getSingleCat(cat.id).expect(200);
   });
@@ -120,7 +120,7 @@ describe('GET /cats/:id - get a cat', () => {
 
 // POST /cats - create cat from data; return `{cat: cat}`
 
-describe('POST /cats - create a cat object', () => {
+describe('POST /cats - Create a cat object', () => {
   it('returns status code 201 when successful', async () => {
     const expected = 201;
 
@@ -209,6 +209,16 @@ describe('PATCH /cats/:id - Update a cat', () => {
     const actual = response.body.error.message;
 
     expect(actual).toEqual(expected);
+  });
+});
+
+// DELETE /cats/[id] - delete cat, return `{message: "Cat deleted"}`
+
+describe('DELETE /cats/:id - Delete a cat', () => {
+  it('returns status code 200 on successful deletion of a given cat', async () => {
+    const expected = 200;
+
+    await api.delete(`/cats/${cat.id}`).expect(expected);
   });
 });
 
