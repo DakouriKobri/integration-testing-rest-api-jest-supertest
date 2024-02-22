@@ -67,10 +67,22 @@ async function updateCat(req, res, next) {
   }
 }
 
-async function deleteCat(req, res) {
+async function deleteCat(req, res, next) {
   const { id } = req.params;
-  const deletedCatId = await catService.remove(id);
-  return res.status(200).json({ id: deletedCatId, message: 'Cat deleted' });
+
+  try {
+    const catToDelete = await catService.findById(id);
+    if (!catToDelete) {
+      let notFoundError = new Error('Not found');
+      notFoundError.status = 404;
+      throw notFoundError;
+    }
+
+    const deletedCatId = await catService.remove(id);
+    return res.status(200).json({ id: deletedCatId, message: 'Cat deleted' });
+  } catch (error) {
+    next(error);
+  }
 }
 
 module.exports = { createCat, deleteCat, getAllCats, getCatById, updateCat };

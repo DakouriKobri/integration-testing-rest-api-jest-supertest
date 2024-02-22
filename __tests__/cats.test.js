@@ -242,6 +242,25 @@ describe('DELETE /cats/:id - Delete a cat', () => {
 
     expect(actual).toEqual(expected);
   });
+
+  it('returns status code 404 if cat to delete does not exist', async () => {
+    const inexistentCatId = 8787897;
+
+    const expected = 404;
+
+    await api.delete(`/cats/${inexistentCatId}`).expect(expected);
+  });
+
+  it('returns message "Not found" if cat to delete does not exist', async () => {
+    const inexistentCatId = 8787897;
+
+    const expected = 'Not found';
+
+    const response = await api.delete(`/cats/${inexistentCatId}`);
+    const actual = response.body.error.message;
+
+    expect(actual).toBe(expected);
+  });
 });
 
 afterEach(async () => {
