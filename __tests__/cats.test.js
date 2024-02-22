@@ -36,6 +36,12 @@ function addNewCat(newCat = validCat) {
   return api.post('/cats').send(newCat);
 }
 
+const updateData = { name: 'Troll' };
+
+function updateCat(id = cat.id, update = updateData) {
+  return api.patch(`/cats/${id}`).send(update);
+}
+
 //  GET /cats - returns `{cats: [cat, ...]}`
 
 describe('GET /cats - get all cats', () => {
@@ -162,14 +168,12 @@ describe('POST /cats - create a cat object', () => {
 // PATCH /cats/[id] - update cat; return `{cat: cat}`
 
 describe('PATCH /cats/:id - Update a cat', () => {
-  const update = { name: 'Troll' };
-
   it('returns updated cat object when update is successful', async () => {
     const expected = {
       id: cat.id,
       name: 'Troll',
     };
-    const response = await api.patch(`/cats/${cat.id}`).send(update);
+    const response = await updateCat();
     const actual = response.body.cat;
 
     expect(actual).toEqual(expected);
@@ -178,13 +182,13 @@ describe('PATCH /cats/:id - Update a cat', () => {
   it('returns status 404 if the cat cannot be found', async () => {
     const expected = 404;
 
-    await api.patch('/cats/8787897').send(update).expect(expected);
+    await updateCat('8787897').expect(expected);
   });
 
   it('returns message "Not Found" if the cat cannot be found', async () => {
     const expected = 'Not Found';
 
-    const response = await api.patch('/cats/8787897').send(update);
+    const response = await updateCat('8787897');
     const actual = response.body.error.message;
 
     expect(actual).toBe(expected);
@@ -195,13 +199,13 @@ describe('PATCH /cats/:id - Update a cat', () => {
   it('returns status code 400 if invalid name is provided', async () => {
     const expected = 400;
 
-    await api.patch(`/cats/${cat.id}`).send(invalidCat).expect(expected);
+    await updateCat(cat.id, invalidCat).expect(expected);
   });
 
   it('returns message "Name must be a string." if invalid name is provided', async () => {
     const expected = 'Name must be a string.';
 
-    const response = await api.patch(`/cats/${cat.id}`).send(invalidCat);
+    const response = await updateCat(cat.id, invalidCat);
     const actual = response.body.error.message;
 
     expect(actual).toEqual(expected);
