@@ -1,67 +1,29 @@
 process.env.NODE_ENV = 'test';
 
-// NPM Packages
-const request = require('supertest');
-
 // Project Imports
-const app = require('../src/app');
-const db = require('../src/db');
-
-const api = request(app);
+const catHelper = require('./__utils__/cat_helpers');
 
 let cat;
 
 beforeEach(async () => {
-  let result = await db.query(
-    `INSERT INTO
-       cats (name) VALUES ('beans')
-       RETURNING id, name
-    `
-  );
-
+  let result = await catHelper.insertOneCatInDb();
   cat = result.rows[0];
 });
-
-function getCats() {
-  return api.get('/cats');
-}
-
-function getSingleCat(id) {
-  return api.get(`/cats/${id}`);
-}
-
-const validCat = { name: 'Ezra' };
-
-function addNewCat(newCat = validCat) {
-  return api.post('/cats').send(newCat);
-}
-
-const updateData = { name: 'Troll' };
-
-function updateCat(id = cat.id, update = updateData) {
-  return api.patch(`/cats/${id}`).send(update);
-}
-
-function deleteCat(id = cat.id) {
-  return api.delete(`/cats/${id}`);
-}
 
 //  GET /cats - returns `{cats: [cat, ...]}`
 
 describe('GET /cats - Get all cats', () => {
   it('returns statusCode 200', async () => {
-    const expected = 200;
-
-    const response = await getCats();
+    const response = await catHelper.getCats();
     const actual = response.status;
 
-    expect(actual).toBe(expected);
+    expect(actual).toBe(catHelper.statusCode200);
   });
 
   it('return 1 as length ', async () => {
     const expected = 1;
 
-    const response = await getCats();
+    const response = await catHelper.getCats();
     const { cats } = response.body;
 
     expect(cats).toHaveLength(expected);
@@ -70,7 +32,7 @@ describe('GET /cats - Get all cats', () => {
   it('returns `cat`', async () => {
     const expected = cat;
 
-    const response = await getCats();
+    const response = await catHelper.getCats();
     const { cats } = response.body;
     const actual = cats[0];
 
@@ -82,13 +44,13 @@ describe('GET /cats - Get all cats', () => {
 
 describe('GET /cats/:id - Get a cat', () => {
   it('returns status code 200 given a cat id', async () => {
-    await getSingleCat(cat.id).expect(200);
+    await catHelper.getSingleCat(cat.id).expect(catHelper.statusCode200);
   });
 
   it('returns cat given cat id', async () => {
     const expected = cat;
 
-    const response = await getSingleCat(cat.id);
+    const response = await catHelper.getSingleCat(cat.id);
     const actual = response.body.cat;
 
     expect(actual).toEqual(expected);
@@ -97,28 +59,24 @@ describe('GET /cats/:id - Get a cat', () => {
   it('asserts cat is of type object given cat id', async () => {
     const expected = 'object';
 
-    const response = await getSingleCat(cat.id);
+    const response = await catHelper.getSingleCat(cat.id);
     const actual = typeof response.body.cat;
 
     expect(actual).toBe(expected);
   });
 
   it('returns status code 404 when no cat is found given cat id', async () => {
-    const expected = 404;
-
-    const response = await getSingleCat(1000);
+    const response = await catHelper.getSingleCat(catHelper.inexistentCatId);
     const actual = response.status;
 
-    expect(actual).toEqual(expected);
+    expect(actual).toEqual(catHelper.statusCode404);
   });
 
   it("returns message 'Not found' when no cat is found given cat id", async () => {
-    const expected = 'Not found';
-
-    const response = await getSingleCat(1000);
+    const response = await catHelper.getSingleCat(catHelper.inexistentCatId);
     const actual = response.body.error.message;
 
-    expect(actual).toEqual(expected);
+    expect(actual).toEqual(catHelper.notFound);
   });
 });
 
@@ -128,20 +86,20 @@ describe('POST /cats - Create a cat object', () => {
   it('returns status code 201 when successful', async () => {
     const expected = 201;
 
-    await addNewCat().expect(expected);
+    await catHelper.addNewCat().expect(expected);
   });
 
   it('returns cat in a json format when successful', async () => {
     const expected = /application\/json/;
 
-    await addNewCat().expect('Content-Type', expected);
+    await catHelper.addNewCat().expect('Content-Type', expected);
   });
 
   it('returns the created cat object when successful', async () => {
     const expectedCatKeys = ['id', 'name'];
-    const expectedName = validCat.name;
+    const expectedName = catHelper.validCat.name;
 
-    const response = await addNewCat();
+    const response = await catHelper.addNewCat();
     const createdCat = response.body.cat;
 
     const actualCatKeys = Object.keys(createdCat);
@@ -151,18 +109,16 @@ describe('POST /cats - Create a cat object', () => {
     expect(actualCatName).toBe(expectedName);
   });
 
-  const invalidCat = { name: 111 };
-
   it('returns status code 400 when invalid data is provided', async () => {
-    const expected = 400;
-
-    await addNewCat(invalidCat).expect(expected);
+    await catHelper
+      .addNewCat(catHelper.invalidCat)
+      .expect(catHelper.statusCode400);
   });
 
   it('returns message "Name must be a string." when invalid `name` is provided', async () => {
     const expected = 'Name must be a string.';
 
-    const response = await addNewCat(invalidCat);
+    const response = await catHelper.addNewCat(catHelper.invalidCat);
     const actual = response.body.error.message;
 
     expect(actual).toBe(expected);
@@ -177,39 +133,37 @@ describe('PATCH /cats/:id - Update a cat', () => {
       id: cat.id,
       name: 'Troll',
     };
-    const response = await updateCat();
+    const response = await catHelper.updateCat(cat.id);
     const actual = response.body.cat;
 
     expect(actual).toEqual(expected);
   });
 
   it('returns status 404 if the cat cannot be found', async () => {
-    const expected = 404;
-
-    await updateCat('8787897').expect(expected);
+    await catHelper
+      .updateCat(catHelper.inexistentCatId)
+      .expect(catHelper.statusCode404);
   });
 
   it('returns message "Not Found" if the cat cannot be found', async () => {
     const expected = 'Not Found';
 
-    const response = await updateCat('8787897');
+    const response = await catHelper.updateCat(catHelper.inexistentCatId);
     const actual = response.body.error.message;
 
     expect(actual).toBe(expected);
   });
 
-  const invalidCat = { name: 111 };
-
   it('returns status code 400 if invalid name is provided', async () => {
-    const expected = 400;
-
-    await updateCat(cat.id, invalidCat).expect(expected);
+    await catHelper
+      .updateCat(cat.id, catHelper.invalidCat)
+      .expect(catHelper.statusCode400);
   });
 
   it('returns message "Name must be a string." if invalid name is provided', async () => {
     const expected = 'Name must be a string.';
 
-    const response = await updateCat(cat.id, invalidCat);
+    const response = await catHelper.updateCat(cat.id, catHelper.invalidCat);
     const actual = response.body.error.message;
 
     expect(actual).toEqual(expected);
@@ -220,15 +174,13 @@ describe('PATCH /cats/:id - Update a cat', () => {
 
 describe('DELETE /cats/:id - Delete a cat', () => {
   it('returns status code 200 on successful deletion of a given cat', async () => {
-    const expected = 200;
-
-    await deleteCat().expect(expected);
+    await catHelper.deleteCat(cat.id).expect(catHelper.statusCode200);
   });
 
   it('returns id of deleted cat on its successful deletion', async () => {
     const expected = cat.id;
 
-    const response = await deleteCat();
+    const response = await catHelper.deleteCat(cat.id);
     const actual = response.body.id;
 
     expect(actual).toBe(expected);
@@ -237,36 +189,32 @@ describe('DELETE /cats/:id - Delete a cat', () => {
   it('returns `{message: "Cat deleted"}` on successful deletion', async () => {
     const expected = 'Cat deleted';
 
-    const response = await deleteCat();
+    const response = await catHelper.deleteCat(cat.id);
     const actual = response.body.message;
 
     expect(actual).toEqual(expected);
   });
 
-  const inexistentCatId = 8787897;
-
   it('returns status code 404 if cat to delete does not exist', async () => {
-    const expected = 404;
-
-    await deleteCat(inexistentCatId).expect(expected);
+    await catHelper
+      .deleteCat(catHelper.inexistentCatId)
+      .expect(catHelper.statusCode404);
   });
 
   it('returns message "Not found" if cat to delete does not exist', async () => {
-    const expected = 'Not found';
-
-    const response = await deleteCat(inexistentCatId);
+    const response = await catHelper.deleteCat(catHelper.inexistentCatId);
     const actual = response.body.error.message;
 
-    expect(actual).toBe(expected);
+    expect(actual).toBe(catHelper.notFound);
   });
 });
 
 afterEach(async () => {
   // Delete any data create by test
-  await db.query('DELETE FROM cats');
+  await catHelper.delateAnyCatInDb();
 });
 
 afterAll(async () => {
-  // Close de connection
-  await db.end();
+  // Close the connection
+  await catHelper.closeConnection();
 });
