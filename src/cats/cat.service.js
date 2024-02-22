@@ -25,4 +25,10 @@ async function update(id, data) {
   return cats.rows[0];
 }
 
-module.exports = { create, findAll, findById, update };
+async function remove(id) {
+  const queryText = `DELETE FROM cats WHERE id = $1 RETURNING id`;
+  const cats = await db.query(queryText, [id]);
+  return cats.rows[0].id;
+}
+
+module.exports = { create, remove, findAll, findById, update };

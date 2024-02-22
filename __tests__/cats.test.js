@@ -220,6 +220,17 @@ describe('DELETE /cats/:id - Delete a cat', () => {
 
     await api.delete(`/cats/${cat.id}`).expect(expected);
   });
+
+  it('returns id of deleted cat on its successful deletion', async () => {
+    const catId = cat.id;
+
+    const expected = catId;
+
+    const response = await api.delete(`/cats/${catId}`);
+    const actual = response.body.id;
+
+    expect(actual).toBe(expected);
+  });
 });
 
 afterEach(async () => {
