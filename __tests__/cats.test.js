@@ -42,6 +42,10 @@ function updateCat(id = cat.id, update = updateData) {
   return api.patch(`/cats/${id}`).send(update);
 }
 
+function deleteCat(id = cat.id) {
+  return api.delete(`/cats/${id}`);
+}
+
 //  GET /cats - returns `{cats: [cat, ...]}`
 
 describe('GET /cats - Get all cats', () => {
@@ -218,45 +222,39 @@ describe('DELETE /cats/:id - Delete a cat', () => {
   it('returns status code 200 on successful deletion of a given cat', async () => {
     const expected = 200;
 
-    await api.delete(`/cats/${cat.id}`).expect(expected);
+    await deleteCat().expect(expected);
   });
 
   it('returns id of deleted cat on its successful deletion', async () => {
-    const catId = cat.id;
+    const expected = cat.id;
 
-    const expected = catId;
-
-    const response = await api.delete(`/cats/${catId}`);
+    const response = await deleteCat();
     const actual = response.body.id;
 
     expect(actual).toBe(expected);
   });
 
   it('returns `{message: "Cat deleted"}` on successful deletion', async () => {
-    const catId = cat.id;
-
     const expected = 'Cat deleted';
 
-    const response = await api.delete(`/cats/${catId}`);
+    const response = await deleteCat();
     const actual = response.body.message;
 
     expect(actual).toEqual(expected);
   });
 
-  it('returns status code 404 if cat to delete does not exist', async () => {
-    const inexistentCatId = 8787897;
+  const inexistentCatId = 8787897;
 
+  it('returns status code 404 if cat to delete does not exist', async () => {
     const expected = 404;
 
-    await api.delete(`/cats/${inexistentCatId}`).expect(expected);
+    await deleteCat(inexistentCatId).expect(expected);
   });
 
   it('returns message "Not found" if cat to delete does not exist', async () => {
-    const inexistentCatId = 8787897;
-
     const expected = 'Not found';
 
-    const response = await api.delete(`/cats/${inexistentCatId}`);
+    const response = await deleteCat(inexistentCatId);
     const actual = response.body.error.message;
 
     expect(actual).toBe(expected);
